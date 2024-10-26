@@ -112,3 +112,57 @@ class DocumentClassifier:
             raise ValueError("Unsupported file format. Only PDF and DOCX files are supported")
         
         return title, content.strip()
+    
+    def predict(self, file_path):
+        """
+        Predict the category for a single file.
+        
+        Args:
+            file_path (str): Path to the file to classify
+            
+        Returns:
+            tuple: (predicted_category, confidence_score)
+        """
+        title, content = self.extract_data_from_file(file_path)
+        
+        # Transform features
+        name_feature = self.name_vectorizer.transform([title])
+        content_feature = self.content_vectorizer.transform([content])
+        
+        # Combine features
+        combined_feature = np.hstack([
+            name_feature.toarray() * 0.4,
+            content_feature.toarray() * 0.6
+        ])
+        
+        # Get prediction probabilities
+        probabilities = self.classifier.predict_proba(combined_feature)[0]
+        
+        # Get the highest probability and corresponding category
+        max_prob = max(probabilities)
+        predicted_category = self.existing_categories[np.argmax(probabilities)]
+        
+        return predicted_category, max_prob
+
+    def organize_file(self, file_path, destination_root):
+        """
+        Organize a single file by moving it to the predicted category folder.
+        
+        Args:
+            file_path (str): Path to the file to organize
+            destination_root (str): Root folder where category folders exist
+        """
+        category, confidence = self.predict(file_path)
+        
+        if confidence < self.threshold:
+            category = "unclassified"
+        
+        # Create category folder if it doesn't exist
+        category_path = os.path.join(destination_root, category)
+        os.makedirs(category_path, exist_ok=True)
+        
+        # Move file to appropriate folder
+        filename = os.path.basename(file_path)
+        destination = os.path.join(category_path, filename)
+        os.rename(file_path, destination)
+
