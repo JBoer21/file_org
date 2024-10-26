@@ -13,6 +13,7 @@
 void printFileProperties(const std::string& path, const struct stat& stats) {
     std::cout << "\nFile: " << path;  // Print file name
     
+    //test 
     // Print file size in bytes
     std::cout << "\nSize: " << stats.st_size << " bytes";
     
