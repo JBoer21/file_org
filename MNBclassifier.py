@@ -20,7 +20,7 @@ class DocumentClassifier:
         data to help classify the folder category'''
         names = [] # folder names
         contents = [] # folder documents
-        categories = [] # 
+        categories = [] # folder names
         # Process existing folders here
         return names, contents, categories
     
