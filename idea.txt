@@ -1,0 +1,24 @@
+Idea for file organizer - start small. Mostly for prompting:
+
+In a given directory, we want to sort all of the loose files by either adding them to existing folders, or creating new appropriate folders. Whatever model we use should be able to understand the categories of the folders
+and use metadata of the files to organize them by category. We do not want this to be recursive. Ie. if there is a loose file in folder in the current directory, it stays where it is. However, the loose files in the current
+directory can get nested into sub folders. I imagine the structure of the project would be like this:
+
+Recursively find a way to categorize all FOLDERS in the current directory. For each file, decide if it categorically matches an existing folder. If not, create a new one to add it to. 
+When a file is added to an existing folder, we should once again check all the FOLDERS in the folder and then decide if it belongs in one of those as well.
+
+For example, let's say we have NLPhw1.pdf as a loose file with two folders School and Personal. We would want to classify it as School. Then within school we have Programming and Philosophy. We would want to classify it in
+Programming. Then in Programming we have Algorithms and Data Structures. It should create a new folder NLP after realizing that NLP doesn't really match with either. 
+
+This is the ideal scenario / workflow. However, it will take a very strong model to do so. The model will have to:
+
+Classify the existing folders into categories. Use data to categorize documents (metadata plus actual document data) and the decide if it strongly matches one of the folders or if a new one needs to be created (not foldering is 
+not an option).
+
+Inital model idea:
+
+Naive bayes classifier with a threshold based decision system for new category creation.
+
+Future features:
+
+    - Feature to name documents based on what the documents are about that result in better folder classification. 
