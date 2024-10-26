@@ -1,0 +1,1 @@
+Interesting thing I didn't know -- python classes automatically ASSUME the first argument of a method is self

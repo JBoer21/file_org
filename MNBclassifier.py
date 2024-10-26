@@ -72,7 +72,7 @@ class DocumentClassifier:
         return names, contents, categories
 
 
-    def extract_data_from_file(file):
+    def extract_data_from_file(self, file):
         '''
         Given a file path, extract its title and contents.
         Works only for PDF and DOCX files.
