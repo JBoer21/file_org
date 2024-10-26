@@ -18,30 +18,59 @@ class DocumentClassifier:
         self.existing_categories = []
     
     def process_folder(self, folder_path):
-        ''' General idea here is that we want to create the largest 'dataset' possible for each folder. We will recursively go through all 'loose' documents in the folder and use this
-        data to help classify the folder category'''
-        names = [] # folder names
-        contents = [] # folder documents
-        categories = [] # folder names
-        # Process existing folders here
+        """ 
+        Process a root folder to collect training data from its subfolders.
+        Each immediate subfolder is treated as a category.
+        
+        Args:
+        folder_path (str): Path to the root folder containing category subfolders
+            
+        Returns:
+            tuple: (names, contents, categories) where:
+                - names: list of file names
+                - contents: list of file contents
+                - categories: list of corresponding categories
+        """
+        names = []
+        contents = []
+        categories = []
+        
+        # Get immediate subfolders (categories)
+        for category in os.listdir(folder_path):
+            category_path = os.path.join(folder_path, category)
+            
+            # Skip if not a directory
+            if not os.path.isdir(category_path):
+                continue
+                
+            # Store category for later use
+            if category not in self.existing_categories:
+                self.existing_categories.append(category)
+            
+            # Process all files in the category folder and its subfolders
+            for root, _, files in os.walk(category_path):
+                for file in files:
+                    file_path = os.path.join(root, file)
+                    
+                    # Skip non-PDF/DOCX files
+                    if not file.lower().endswith(('.pdf', '.docx')):
+                        continue
+                        
+                    try:
+                        # Extract data from file
+                        title, content = self.extract_data_from_file(file_path)
+                        
+                        # Add to training data
+                        names.append(title)
+                        contents.append(content)
+                        categories.append(category)
+                        
+                    except (ValueError, FileNotFoundError) as e:
+                        print(f"Error processing {file_path}: {str(e)}")
+                        continue
+        
         return names, contents, categories
-    
-    def fit(self, folder_path):
-        # Get training data from existing folders
-        names, contents, categories = self.process_folder(folder_path)
-        
-        # Create feature matrices
-        name_features = self.name_vectorizer.fit_transform(names)
-        content_features = self.content_vectorizer.fit_transform(contents)
-        
-        # Combine features (with weights)
-        combined_features = np.hstack([
-            name_features.toarray() * 0.4,  # Weight for name importance
-            content_features.toarray() * 0.6 # Weight for content importance
-        ])
-        
-        # Train classifier
-        self.classifier.fit(combined_features, categories)
+
 
     def extract_data_from_file(file):
         '''
