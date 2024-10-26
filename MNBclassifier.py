@@ -43,43 +43,43 @@ class DocumentClassifier:
         # Train classifier
         self.classifier.fit(combined_features, categories)
 
-def extract_data_from_file(file):
-    '''
-    Given a file path, extract its title and contents.
-    Works only for PDF and DOCX files.
-    
-    Args:
-        file (str): Path to the file
+    def extract_data_from_file(file):
+        '''
+        Given a file path, extract its title and contents.
+        Works only for PDF and DOCX files.
         
-    Returns:
-        tuple: (title, content) where title is the filename without extension
-               and content is the extracted text
+        Args:
+            file (str): Path to the file
+            
+        Returns:
+            tuple: (title, content) where title is the filename without extension
+                and content is the extracted text
+            
+        Raises:
+            ValueError: If file format is not supported
+            FileNotFoundError: If file doesn't exist
+        '''
+        if not os.path.exists(file):
+            raise FileNotFoundError(f"File {file} not found")
         
-    Raises:
-        ValueError: If file format is not supported
-        FileNotFoundError: If file doesn't exist
-    '''
-    if not os.path.exists(file):
-        raise FileNotFoundError(f"File {file} not found")
-    
-    # Get file extension and title
-    file_extension = os.path.splitext(file)[1].lower()
-    title = os.path.splitext(os.path.basename(file))[0]
-    content = ""
-    
-    if file_extension == '.pdf':
-        # Handle PDF files
-        reader = PdfReader(file)
-        for page in reader.pages:
-            content += page.extract_text() + "\n"
-            
-    elif file_extension == '.docx':
-        # Handle DOCX files
-        doc = Document(file)
-        for paragraph in doc.paragraphs:
-            content += paragraph.text + "\n"
-            
-    else:
-        raise ValueError("Unsupported file format. Only PDF and DOCX files are supported")
-    
-    return title, content.strip()
+        # Get file extension and title
+        file_extension = os.path.splitext(file)[1].lower()
+        title = os.path.splitext(os.path.basename(file))[0]
+        content = ""
+        
+        if file_extension == '.pdf':
+            # Handle PDF files
+            reader = PdfReader(file)
+            for page in reader.pages:
+                content += page.extract_text() + "\n"
+                
+        elif file_extension == '.docx':
+            # Handle DOCX files
+            doc = Document(file)
+            for paragraph in doc.paragraphs:
+                content += paragraph.text + "\n"
+                
+        else:
+            raise ValueError("Unsupported file format. Only PDF and DOCX files are supported")
+        
+        return title, content.strip()
