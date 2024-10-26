@@ -19,6 +19,12 @@ Inital model idea:
 
 Naive bayes classifier with a threshold based decision system for new category creation.
 
+Data - to keep things simple, we will only consider two types of loose file data (pdfs and docx):
+    1. The title of the document
+    2. The content of the document
+
+    in future uses, we can consider document type, author, language and other types of metadata. We will stick with this for now.
+
 Future features:
 
     - Feature to name documents based on what the documents are about that result in better folder classification. 
